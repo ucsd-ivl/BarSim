@@ -40,6 +40,11 @@ sysinfo.txt
 .DS_Store
 .DS_Store?
 
+# Python Cache
+__pycache__/
+*.py[cod]
+*$py.class
+
 # Logged Data Entries
 ExperimentData/
 
