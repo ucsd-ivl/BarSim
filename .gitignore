@@ -39,3 +39,9 @@ sysinfo.txt
 # OS Generated Files
 .DS_Store
 .DS_Store?
+
+# Logged Data Entries
+ExperimentData/
+
+# Will add documentations at a later time
+Documentation/
