@@ -22,7 +22,7 @@ class HierarchyTree:
         def serialize(self):
             root = dict()
             root["name"] = self.name
-            root["blinkCount"] = 0
+            root["blinkCount"] = self.blinkCount
             root["lookedAtTime"] = self.lookedAtTime
             root["children"] = [self.children[key].serialize() for key in self.children.keys()]
             return root
@@ -83,8 +83,9 @@ class HierarchyTree:
             for data in content[1:]:
                 dataFields = [field.strip() for field in data.split(',')]
                 lookedAtTime = int(dataFields[0])
-                dataPath = dataFields[1:]
-                self.insertNode(dataPath, 0, lookedAtTime)
+                blinkCount = int(dataFields[1])
+                dataPath = dataFields[2:]
+                self.insertNode(dataPath, blinkCount, lookedAtTime)
 
         return True
 
