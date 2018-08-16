@@ -55,6 +55,7 @@ public class UpdateFoveFromViveTracker : MonoBehaviour
     private Quaternion FoveHeadsetTareOrientation;
     private float yawDriftCorrectionOffset;
     private long lastDriftCorrectionTimeMs;
+    private bool isHeadsetCalibrated = false;
 
     // Callback function to handle registering new connected Vive Tracker
     private void onNewDeviceConnection(int index, bool connected)
@@ -95,6 +96,7 @@ public class UpdateFoveFromViveTracker : MonoBehaviour
         newPosesAction = SteamVR_Events.NewPosesAction(onNewPose);
         deviceConnectedAction = SteamVR_Events.DeviceConnectedAction(onNewDeviceConnection);
         lastDriftCorrectionTimeMs = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
+        isHeadsetCalibrated = false;
     }
 
     private void CorrectHeadsetYawDrift()
@@ -129,6 +131,10 @@ public class UpdateFoveFromViveTracker : MonoBehaviour
          */
         if(Input.GetKeyDown(KeyCode.H))
         {
+            // Check that headset vive tracker and controllers are both active
+            if ((IsHeadsetPositionTracked() && IsControllersConnected()) == false)
+                return;
+
             // Check that fove is set up correctly
             if ((FoveInterface.IsHardwareConnected() && FoveInterface.IsHardwareReady()) == false)
                 return;
@@ -157,23 +163,17 @@ public class UpdateFoveFromViveTracker : MonoBehaviour
             // Log the current FOVE headset and Vive Tracker orientation
             FoveHeadsetTareOrientation = FoveInterface.GetHMDRotation();
             ViveTrackerTareOrientation = currentViveTrackerPose.rot;
-            
+
             // Everything is done
+            isHeadsetCalibrated = true;
             Debug.Log("Finished setting up FOVE localization");
         }
 
         /**
          * Press P to shift the user's current position to the center of world space
          */
-        if(Input.GetKeyDown(KeyCode.P))
-        {
-            personSetup.transform.position = new Vector3(0.0f, 0.0f, 0.0f);
-            Vector3 scenePositionShiftAmount = transform.position * -1.0f;
-            personSetup.transform.position = new Vector3(
-                scenePositionShiftAmount.x,
-                personSetup.transform.position.y,
-                scenePositionShiftAmount.z);
-        }
+        if (Input.GetKeyDown(KeyCode.P))
+            ReCenterUser();
 
         // Attempt to mitigate FOVE headset's yaw drift
         if (driftCorrection)
@@ -185,6 +185,39 @@ public class UpdateFoveFromViveTracker : MonoBehaviour
         transform.localRotation = Quaternion.Euler(0.0f, yawOrientationOffset + yawDriftCorrectionOffset, 0.0f);
         var eyePositionOffset = transform.localRotation * FoveInterface.GetHMDRotation() * trackerToEyePositionOffset;
         transform.localPosition = currentViveTrackerPose.pos + eyePositionOffset;
+    }
+
+    public void ReCenterUser()
+    {
+        personSetup.transform.position = new Vector3(0.0f, 0.0f, 0.0f);
+        Vector3 scenePositionShiftAmount = transform.position * -1.0f;
+        personSetup.transform.position = new Vector3(
+            scenePositionShiftAmount.x,
+            personSetup.transform.position.y,
+            scenePositionShiftAmount.z);
+    }
+
+    public bool IsHeadsetCalibrated()
+    {
+        return isHeadsetCalibrated;
+    }
+
+    public bool IsHeadsetPositionTracked()
+    {
+        return (device != EIndex.None);
+    }
+
+    public bool IsControllersConnected()
+    {
+        return (leftController.activeInHierarchy) && (rightController.activeInHierarchy);
+    }
+
+    public SteamVR_Controller.Device [] GetControllers()
+    {
+        SteamVR_Controller.Device[] controllers = new SteamVR_Controller.Device[2];
+        controllers[0] = leftController.GetComponent<ControllerGrabObject>().GetDevice();
+        controllers[1] = rightController.GetComponent<ControllerGrabObject>().GetDevice();
+        return controllers;
     }
 
     void OnEnable()

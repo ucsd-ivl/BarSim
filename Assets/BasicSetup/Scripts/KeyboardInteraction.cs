@@ -18,12 +18,6 @@ public class KeyboardInteraction : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
-        if (Input.GetKeyDown(KeyCode.C))
-        {
-            FoveInterface.EnsureEyeTrackingCalibration();
-        }
-
         if(Input.GetKey(KeyCode.UpArrow))
         {
             Vector3 tablePosition = GameObject.Find(TABLE_NAME).transform.position;
