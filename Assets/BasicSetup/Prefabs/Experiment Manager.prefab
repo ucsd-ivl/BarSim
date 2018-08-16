@@ -11,6 +11,40 @@ Prefab:
   m_ParentPrefab: {fileID: 0}
   m_RootGameObject: {fileID: 1539121347061164}
   m_IsPrefabParent: 1
+--- !u!1 &1092876552583120
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 4466423133221962}
+  - component: {fileID: 215698569779908312}
+  m_Layer: 0
+  m_Name: Reflection Probe
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!1 &1126047301425660
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 4998727624577400}
+  - component: {fileID: 23726899955796002}
+  - component: {fileID: 102087882112001062}
+  - component: {fileID: 114076286918016860}
+  m_Layer: 0
+  m_Name: Experiment Manager UI Prompt
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
 --- !u!1 &1539121347061164
 GameObject:
   m_ObjectHideFlags: 0
@@ -37,10 +71,106 @@ Transform:
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
+  m_Children:
+  - {fileID: 4998727624577400}
+  - {fileID: 4466423133221962}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!4 &4466423133221962
+Transform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1092876552583120}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 1.5, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 4195844604906262}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!4 &4998727624577400
+Transform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1126047301425660}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 20}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 4195844604906262}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!23 &23726899955796002
+MeshRenderer:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1126047301425660}
+  m_Enabled: 0
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RenderingLayerMask: 4294967295
+  m_Materials:
+  - {fileID: 10100, guid: 0000000000000000e000000000000000, type: 0}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 0
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+--- !u!102 &102087882112001062
+TextMesh:
+  serializedVersion: 3
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1126047301425660}
+  m_Text: Experiment Manager UI Prompt
+  m_OffsetZ: 0
+  m_CharacterSize: 0.03
+  m_LineSpacing: 1
+  m_Anchor: 4
+  m_Alignment: 1
+  m_TabSize: 4
+  m_FontSize: 400
+  m_FontStyle: 1
+  m_RichText: 1
+  m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
+  m_Color:
+    serializedVersion: 2
+    rgba: 4294967295
+--- !u!114 &114076286918016860
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1126047301425660}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3682e0a719b90bf48be6223b45e0dc80, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  foveCamera: {fileID: 0}
 --- !u!114 &114827051912936892
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -52,18 +182,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: da4684e63c39aea4180abe4eed2e5d9d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  totalNumberOfScenes: 2
-  secondsBetweenScene: 5
+  totalNumberOfScenes: 5
+  secondsBetweenScene: 20
   fadeOutDuration: 1
+  sceneChangeCooldownDuration: 1
   eyeTrackerInstance: {fileID: 0}
   cameraFadeInstance: {fileID: 0}
+  headsetLocalizationInstance: {fileID: 0}
+  uiPrompt: {fileID: 114076286918016860}
+  reflectionProbeInstance: {fileID: 215698569779908312}
+  cameraGameObject: {fileID: 0}
   textureDirectory: Assets/SkyBox
-  defaultSkyboxMaterial: {fileID: 10304, guid: 0000000000000000f000000000000000, type: 0}
+  defaultSkyboxMaterial: {fileID: 2100000, guid: 74b01cd00a4f11c4fafbbeafbb3dd659,
+    type: 2}
   skyboxMaterial: {fileID: 2100000, guid: a3359debf17ff764ca8e0b5edcf9a278, type: 2}
-  skyboxCubemap:
-  - {fileID: 8900000, guid: a4b08622f6b3bdb418de33881d30a46d, type: 3}
-  - {fileID: 8900000, guid: 70101bf9fbfe45f4392c17d83259d386, type: 3}
-  - {fileID: 8900000, guid: 6431cd7e9738871409bcfbd0e0f5fd82, type: 3}
 --- !u!114 &114899882668251318
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -75,3 +207,35 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e290cda0a62a93447a637937f78de77c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!215 &215698569779908312
+ReflectionProbe:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1092876552583120}
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Type: 0
+  m_Mode: 1
+  m_RefreshMode: 2
+  m_TimeSlicingMode: 2
+  m_Resolution: 128
+  m_UpdateFrequency: 0
+  m_BoxSize: {x: 10, y: 10, z: 10}
+  m_BoxOffset: {x: 0, y: 0, z: 0}
+  m_NearClip: 0.3
+  m_FarClip: 1000
+  m_ShadowDistance: 100
+  m_ClearFlags: 1
+  m_BackGroundColor: {r: 0, g: 0, b: 0, a: 0}
+  m_CullingMask:
+    serializedVersion: 2
+    m_Bits: 0
+  m_IntensityMultiplier: 1
+  m_BlendDistance: 1
+  m_HDR: 1
+  m_BoxProjection: 0
+  m_RenderDynamicObjects: 0
+  m_UseOcclusionCulling: 1
+  m_Importance: 1
+  m_CustomBakedTexture: {fileID: 0}
