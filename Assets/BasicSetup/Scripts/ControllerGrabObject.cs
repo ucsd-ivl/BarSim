@@ -99,15 +99,6 @@ public class ControllerGrabObject : MonoBehaviour
         objectInHand = null;
     }
 
-    public void Vibrate()
-    {
-        //new Thread(() =>
-        //{
-            for (int i = 0; i < 1000; i++)
-                Controller.TriggerHapticPulse(pulseDurationMicroSecond);
-        //}).Start();
-    }
-
     // Update is called once per frame
     void Update()
     {
@@ -121,5 +112,10 @@ public class ControllerGrabObject : MonoBehaviour
         if (Controller.GetHairTriggerUp())
             if (objectInHand)
                 ReleaseObject();
+    }
+
+    public SteamVR_Controller.Device GetDevice()
+    {
+        return Controller;
     }
 }

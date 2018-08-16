@@ -20,11 +20,12 @@ public class EyeTracker : MonoBehaviour
     private const string LABEL_IMAGE = "Assets/Labels/";
     private const string LABEL_TEXT = "Assets/Labels/";
 
-    private long eyeBlinkCount;
+    private long currentEyeBlinkCount;
+    private long lastEyeBlinkCount;
     private Fove.Managed.EFVR_Eye lastEyeClosedStatus;
 
     private Dictionary<Color, List<string>> labelDictionary;
-    private HierarchicalLabel hierarchicalLabels;
+    private EyeTrackingLogger eyeTrackingLogger;
     private Texture2D labelTexture;
 
     long lastUpdateTimeTicks = DateTime.Now.Ticks;
@@ -34,7 +35,7 @@ public class EyeTracker : MonoBehaviour
     {
         // Create a new instance of dictionaries we'll use
         labelDictionary = new Dictionary<Color, List<string>>();
-        hierarchicalLabels = new HierarchicalLabel();
+        eyeTrackingLogger = new EyeTrackingLogger();
 
         // Initialize variables
         experimentStartTime = DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss");
@@ -45,11 +46,12 @@ public class EyeTracker : MonoBehaviour
     {
         // Create a new instance of dictionaries we'll use
         labelDictionary = new Dictionary<Color, List<string>>();
-        hierarchicalLabels = new HierarchicalLabel();
+        eyeTrackingLogger = new EyeTrackingLogger();
         labelTexture = new Texture2D(2, 2);
 
         // Initialize variables
-        eyeBlinkCount = 0;
+        currentEyeBlinkCount = 0;
+        lastEyeBlinkCount = 0;
         lastEyeClosedStatus = Fove.Managed.EFVR_Eye.Neither;
         currentScene = sceneName;
 
@@ -136,9 +138,14 @@ public class EyeTracker : MonoBehaviour
                 currentLookAtItemPath = null;
         }
 
-        // Keep track of the duration we've looked at that item
-        long totalLookAtDuration = hierarchicalLabels.UpdateLabelLookAtTime(
-            currentLookAtItemPath, currentTimeTicks - lastUpdateTimeTicks);
+        // Keep track of eye blink
+        Fove.Managed.EFVR_Eye eyeClosedStatus = FoveInterface.CheckEyesClosed();
+        if ((lastEyeClosedStatus != Fove.Managed.EFVR_Eye.Neither) && (eyeClosedStatus == Fove.Managed.EFVR_Eye.Neither))
+            currentEyeBlinkCount++;
+
+        // Keep track of the duration we've looked at that item and blink count
+        long totalLookAtDuration = eyeTrackingLogger.UpdateLabels(currentLookAtItemPath,
+            currentTimeTicks - lastUpdateTimeTicks, currentEyeBlinkCount - lastEyeBlinkCount);
 
         // Make sure labeled text is facing user
         transform.LookAt(foveHeadset.transform);
@@ -153,14 +160,10 @@ public class EyeTracker : MonoBehaviour
         eyeCursor.GetComponent<Renderer>().enabled = renderCursor;
         eyeLabeler.GetComponent<Renderer>().enabled = renderCursor;
 
-        // Keep track of eye blink
-        Fove.Managed.EFVR_Eye eyeClosedStatus = FoveInterface.CheckEyesClosed();
-        if ((lastEyeClosedStatus != Fove.Managed.EFVR_Eye.Neither) && (eyeClosedStatus == Fove.Managed.EFVR_Eye.Neither))
-            eyeBlinkCount++;
-
         // Update state
         lastUpdateTimeTicks = currentTimeTicks;
         lastEyeClosedStatus = eyeClosedStatus;
+        lastEyeBlinkCount = currentEyeBlinkCount;
     }
 
     private List<string> TransformToObjectPath(Transform leafObject)
@@ -179,7 +182,7 @@ public class EyeTracker : MonoBehaviour
 
     public void SaveToFile()
     {
-        hierarchicalLabels.SaveToFile(logDirectory + "/" + experimentStartTime, currentScene);
+        eyeTrackingLogger.SaveToFile(logDirectory + "/" + experimentStartTime, currentScene);
     }
 
     private void OnApplicationQuit()
