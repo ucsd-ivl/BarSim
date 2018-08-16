@@ -6,35 +6,32 @@ using UnityEngine.UI;
 public class CameraFade : MonoBehaviour
 {
 
-    public Texture fadeToTexture;
-
-    private float opacity;
+    private Material fadeToMaterial;
 
     // Use this for initialization
     void Start()
     {
-        opacity = 1.0f;
+        // Initialize the opacity to show
+        fadeToMaterial = GetComponent<Renderer>().material;
+        fadeToMaterial.color = new Color(0.0f, 0.0f, 0.0f, 0.0f);
     }
 
     // Update is called once per frame
     void Update()
     {
-        var cameras = Camera.allCameras;
-    }
-
-    private void OnGUI()
-    {
-        Color newColor = GUI.color;
-        newColor.a = 1.0f - opacity;
-
-        GUI.color = newColor;
-        GUI.depth = 1000;
-
-        GUI.DrawTexture(new Rect(0, 0, Screen.width, Screen.height), fadeToTexture);
+        
     }
 
     public void setOpacity(float newOpacity)
     {
-        this.opacity = newOpacity;
+        // Calculate the new opacity
+        float opacity = 1.0f - newOpacity;
+        if (opacity < 0.0f)
+            opacity = 0.0f;
+        if (opacity > 1.0f)
+            opacity = 1.0f;
+
+        // Assign the new opacity
+        fadeToMaterial.color = new Color(0.0f, 0.0f, 0.0f, opacity);
     }
 }
