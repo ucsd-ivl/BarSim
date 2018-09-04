@@ -9,12 +9,36 @@ EditorBuildSettings:
     path: Assets/BasicSetup/Scenes/Default.unity
     guid: 1847936745076b7469c5c614eda7ac66
   - enabled: 1
-    path: Assets/Scenes/Scene_000.unity
-    guid: 40b9e0793c46c1d408cd6ef07330da3a
+    path: Assets/Custom/Scenes/Scene_000.unity
+    guid: b235caf7ddfbeec419e388307c09742c
   - enabled: 1
-    path: Assets/Scenes/Scene_001.unity
-    guid: 443db42b4305b3c42aeb55b30d5aca67
+    path: Assets/Custom/Scenes/Scene_001.unity
+    guid: 8c6df460a08877144b13707c90a0dd3d
   - enabled: 1
-    path: Assets/Scenes/Scene_002.unity
-    guid: dfe04a55b4d049445ac3f5e3c443723a
+    path: Assets/Custom/Scenes/Scene_005.unity
+    guid: 1c20684c47dfa8d4c93aa7078f82c721
+  - enabled: 1
+    path: Assets/Custom/Scenes/Scene_008.unity
+    guid: 15b17465667024741a8061dc1bddab32
+  - enabled: 1
+    path: Assets/Custom/Scenes/Scene_002.unity
+    guid: 49b14f34c695dd545bca857ac681c72e
+  - enabled: 1
+    path: Assets/Custom/Scenes/Scene_003.unity
+    guid: d4feabf8439581140a430cf375c5ed41
+  - enabled: 1
+    path: Assets/Custom/Scenes/Scene_004.unity
+    guid: 726234aa39e4cb7409953b791e0ed47d
+  - enabled: 1
+    path: Assets/Custom/Scenes/Scene_006.unity
+    guid: 4bd3d962c05b3b3448e055e410e7b800
+  - enabled: 1
+    path: Assets/Custom/Scenes/Scene_007.unity
+    guid: e6605ecaa68b12a42bec9fb98b04c5d6
+  - enabled: 1
+    path: Assets/Custom/Scenes/Scene_009.unity
+    guid: fcb1a9c4ca073bf47ad290a375f88a70
+  - enabled: 1
+    path: Assets/Custom/Scenes/Scene_010.unity
+    guid: 1b29bcbd97da64f47bbeacf259caa42a
   m_configObjects: {}

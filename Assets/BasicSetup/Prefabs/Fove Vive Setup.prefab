@@ -20,7 +20,6 @@ GameObject:
   m_Component:
   - component: {fileID: 4367318093950150}
   - component: {fileID: 114505227344617652}
-  - component: {fileID: 114296222144851446}
   m_Layer: 2
   m_Name: Fove Headset
   m_TagString: Untagged
@@ -196,7 +195,7 @@ GameObject:
   - component: {fileID: 20551930699924870}
   - component: {fileID: 114156969000338696}
   m_Layer: 2
-  m_Name: Fove Interface
+  m_Name: Fove Camera
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -277,7 +276,7 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1269864177471412}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -307,7 +306,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1965482851314278}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 1.5, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4775442625974858}
@@ -731,7 +730,7 @@ MonoBehaviour:
   gaze: 1
   orientation: 1
   position: 0
-  skipAutoCalibrationCheck: 1
+  skipAutoCalibrationCheck: 0
   disableTimewarp: 0
   disableFading: 0
   disableDistortion: 0
@@ -772,18 +771,6 @@ MonoBehaviour:
   verbose: 0
   createComponents: 1
   updateDynamically: 1
---- !u!114 &114296222144851446
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1269864177471412}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 170149277bb5ec640befa820e38a9db9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  foveHeadset: {fileID: 1948500365741658}
 --- !u!114 &114296810408213600
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -856,7 +843,6 @@ MonoBehaviour:
   eyeCursor: {fileID: 1683509378152312}
   eyeLabeler: {fileID: 1704189903114884}
   foveHeadset: {fileID: 1269864177471412}
-  logDirectory: ExperimentData
 --- !u!114 &114954118536721544
 MonoBehaviour:
   m_ObjectHideFlags: 1

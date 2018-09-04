@@ -1,17 +1,19 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class ExperimentManager : MonoBehaviour
 {
-
-    /**
-     * Note: Scene_00 is the default waiting scene. It will only move
-     *       onto the next scene when setup is complete.
-     */
+    [Header("Experiment Settings")]
+    [Tooltip("Specify if we should request the user to enter test subject name at start")]
+    public bool requestTestSubjectName = true;
+    [Tooltip("Specify the directory to log data relative to this application's home directory")]
+    public string logRootDirectory = "ExperimentData";
 
     [Header("Scene Settings")]
     [Tooltip("Specify how many total scenes are there total")]
@@ -32,10 +34,12 @@ public class ExperimentManager : MonoBehaviour
     public UpdateFoveFromViveTracker headsetLocalizationInstance;
     [Tooltip("Instance to UI Prompt for Experiment Manager")]
     public ExperimentManagerUiPrompt uiPrompt;
-    [Tooltip("Instance of reflection probe")]
-    public ReflectionProbe reflectionProbeInstance;
     [Tooltip("Get a game object instance of the headset for position/orientation data")]
     public GameObject cameraGameObject;
+    [Tooltip("Get the input field for user name of subject")]
+    public InputField usernameInputField;
+    [Tooltip("Instance of the username input field")]
+    public GameObject usernameInputGameObject;
 
     [Header("Skybox Specifications")]
     [Tooltip("Set texture directory")]
@@ -57,6 +61,9 @@ public class ExperimentManager : MonoBehaviour
     private bool systemCalibrated = false;
     private bool eyeTrackerCalibrationStarted = false;
 
+    private string experimentStartTime;
+    private string logDirectory;
+    private string testSubjectName;
     private int currentSceneNumber;
     private long nextSceneTime = long.MaxValue;
     private long fadeSceneTime = long.MaxValue;
@@ -65,25 +72,23 @@ public class ExperimentManager : MonoBehaviour
 
     private Vector3 scenePositionShiftAmount;
 
-    private Queue fpsTracker;
-    private long lastUpdateTimeNs;
-    private double fps;
-
     private bool skipIntro = false;
 
     // Use this for initialization
     void Start()
     {
-        fpsTracker = new Queue();
-        lastUpdateTimeNs = DateTime.Now.Ticks;
-        fps = 0;
-
         // Initialize variables
         systemCalibrated = false;
         eyeTrackerCalibrationStarted = false;
         currentSceneNumber = 0;
         currentSceneState = SCENE_CHANGE_STATE.NotChanging;
         nextAllowedSceneChangeRequestTime = 0;
+        testSubjectName = "TestSubject";
+
+        // Create logging directory
+        experimentStartTime = DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss");
+        logDirectory = Directory.GetParent(Application.dataPath) + "/" + logRootDirectory + "/" + experimentStartTime;
+        Directory.CreateDirectory(logDirectory);
 
         // Unload all scenes
         int totalScenesKnown = SceneManager.sceneCount;
@@ -100,6 +105,13 @@ public class ExperimentManager : MonoBehaviour
             systemCalibrated = true;
     }
 
+    private void Awake()
+    {
+        // Initialize callbacks
+        usernameInputGameObject.SetActive(requestTestSubjectName);
+        usernameInputField.onEndEdit.AddListener(delegate { UsernameInputFieldCallback(usernameInputField); });
+    }
+
     // Update is called once per frame
     void Update()
     {
@@ -109,6 +121,10 @@ public class ExperimentManager : MonoBehaviour
             RunCalibrationSetup();
             return;
         }
+
+        // Ensure that user has entered in the subject's name
+        if (usernameInputGameObject.activeInHierarchy)
+            return;
 
         if(skipIntro && (currentSceneNumber == 0))
         {
@@ -130,7 +146,7 @@ public class ExperimentManager : MonoBehaviour
                 case SCENE_CHANGE_STATE.NotChanging:
                     if (currentSceneNumber < totalNumberOfScenes)
                     {
-                        eyeTrackerInstance.SaveToFile();
+                        eyeTrackerInstance.SaveToFile(logDirectory);
                         fadeSceneTime = nextSceneTime;
                         currentSceneState = SCENE_CHANGE_STATE.FadeOut;
                     }
@@ -147,6 +163,7 @@ public class ExperimentManager : MonoBehaviour
                 
                 // Tell program to start changing scene
                 case SCENE_CHANGE_STATE.InitiateChange:
+                    headsetLocalizationInstance.ReCenterUser();
                     SceneManager.UnloadSceneAsync(GenerateSceneName(currentSceneNumber));
                     currentSceneNumber++;
                     if (currentSceneNumber < totalNumberOfScenes)
@@ -192,15 +209,6 @@ public class ExperimentManager : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.N))
             ChangeToNextScene();
-
-        // For debugging purposes, keep track of FPS
-        long timeBetweenFrameNs = DateTime.Now.Ticks - lastUpdateTimeNs;
-        fps += (double) TimeSpan.TicksPerSecond / (double) timeBetweenFrameNs / 100.0;
-        fpsTracker.Enqueue(timeBetweenFrameNs);
-        if( fpsTracker.Count > 100 )
-            fps -= (double)TimeSpan.TicksPerSecond / (double)(long) fpsTracker.Dequeue() / 100.0;
-        lastUpdateTimeNs = DateTime.Now.Ticks;
-        //Debug.Log("FPS: " + fps );
     }
 
     private void RunCalibrationSetup()
@@ -237,7 +245,22 @@ public class ExperimentManager : MonoBehaviour
             eyeTrackerInstance.CreateNewScene(GenerateSceneName(currentSceneNumber));
             SceneManager.LoadSceneAsync(GenerateSceneName(currentSceneNumber), LoadSceneMode.Additive);
             ChangeSkybox(currentSceneNumber);
+            currentSceneState = SCENE_CHANGE_STATE.Changing;
         }
+    }
+
+    private void UsernameInputFieldCallback(InputField input)
+    {
+        // Get the username and turn off prompt
+        if (input.text.Length > 0)
+            testSubjectName = input.text;
+        else
+            testSubjectName = input.placeholder.GetComponent<Text>().text;
+        usernameInputGameObject.SetActive(false);
+
+        // Save key-value pair into properties file
+        using (StreamWriter propertyFile = new StreamWriter(logDirectory + "/properties.txt", true))
+            propertyFile.WriteLine("username : " + testSubjectName);
     }
 
     private void ChangeSkybox(int sceneNumber)
@@ -253,25 +276,6 @@ public class ExperimentManager : MonoBehaviour
         }
         else
             RenderSettings.skybox = defaultSkyboxMaterial;
-
-        // Set stereoscopic skybox -- left is default skybox. Change right skybox only 
-        /*
-        if (sceneNumber >= 0)
-        {
-            if (GameObject.Find("FOVE Eye (Right)").GetComponent<Skybox>() == null)
-                GameObject.Find("FOVE Eye (Right)").AddComponent<Skybox>();
-            Camera camRight = GameObject.Find("FOVE Eye (Right)").GetComponent<Camera>();
-            camRight.clearFlags = CameraClearFlags.Skybox;
-            camRight.GetComponent<Skybox>().material = defaultSkyboxMaterial;// Resources.Load("Material/New_Material", typeof(Material)) as Material;
-        }
-        else
-        {
-            if (GameObject.Find("FOVE Eye (Right)").GetComponent<Skybox>() != null)
-                Destroy(GameObject.Find("FOVE Eye (Right)").GetComponent<Skybox>());
-        }*/
-
-        // Update reflection probe
-        reflectionProbeInstance.RenderProbe();
     }
 
     private string GenerateSceneName(int sceneNumber)
@@ -279,7 +283,7 @@ public class ExperimentManager : MonoBehaviour
         return "Scene_" + sceneNumber.ToString("000");
     }
 
-    public void ChangeToNextScene()
+    public bool ChangeToNextScene()
     {
         if (nextAllowedSceneChangeRequestTime < DateTime.Now.Ticks)
         {
@@ -287,8 +291,10 @@ public class ExperimentManager : MonoBehaviour
             {
                 nextSceneTime = DateTime.Now.Ticks;
                 nextAllowedSceneChangeRequestTime = DateTime.Now.Ticks + sceneChangeCooldownDuration * TimeSpan.TicksPerSecond;
+                return true;
             }
         }
+        return false;
     }
 
     public Transform getUserHeadTransform()
@@ -318,5 +324,25 @@ public class ExperimentManager : MonoBehaviour
     public SteamVR_Controller.Device [] GetControllers()
     {
         return headsetLocalizationInstance.GetControllers();
+    }
+
+    public Transform [] GetControllerTransforms()
+    {
+        return headsetLocalizationInstance.GetControllerTransforms();
+    }
+
+    public void TeleportUser(Vector3 newLocation)
+    {
+        headsetLocalizationInstance.TeleportUser(newLocation);
+    }
+
+    public string GetLoggingDirectory()
+    {
+        return logDirectory;
+    }
+
+    public string GetTestSubjectName()
+    {
+        return testSubjectName;
     }
 }

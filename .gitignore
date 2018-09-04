@@ -48,5 +48,14 @@ __pycache__/
 # Logged Data Entries
 ExperimentData/
 
+# Executable
+Executable/
+
+# Asset Store Packages
+Assets/AssetStoreModels/
+Assets/UnityAssetStore/
+Assets/AssetStoreModels.meta
+Assets/UnityAssetStore.meta
+
 # Will add documentations at a later time
 Documentation/

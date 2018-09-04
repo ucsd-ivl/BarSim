@@ -197,6 +197,15 @@ public class UpdateFoveFromViveTracker : MonoBehaviour
             scenePositionShiftAmount.z);
     }
 
+    public void TeleportUser(Vector3 newPosition)
+    {
+        ReCenterUser();
+        personSetup.transform.position = new Vector3(
+            personSetup.transform.position.x + newPosition.x,
+            personSetup.transform.position.y,
+            personSetup.transform.position.z + newPosition.z);
+    }
+
     public bool IsHeadsetCalibrated()
     {
         return isHeadsetCalibrated;
@@ -218,6 +227,14 @@ public class UpdateFoveFromViveTracker : MonoBehaviour
         controllers[0] = leftController.GetComponent<ControllerGrabObject>().GetDevice();
         controllers[1] = rightController.GetComponent<ControllerGrabObject>().GetDevice();
         return controllers;
+    }
+
+    public Transform [] GetControllerTransforms()
+    {
+        Transform[] controllersTransform = new Transform[2];
+        controllersTransform[0] = leftController.transform;
+        controllersTransform[1] = rightController.transform;
+        return controllersTransform;
     }
 
     void OnEnable()

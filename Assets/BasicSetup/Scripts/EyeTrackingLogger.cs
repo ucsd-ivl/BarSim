@@ -106,7 +106,7 @@ public class EyeTrackingLogger
             = new SortedDictionary<string, TrackedEyeFeatures>(trackedFeatures);
 
         // Create directory to store the data
-        string logDirectory = Directory.GetParent(Application.dataPath) + "/" + filePath + "/" + sceneName;
+        string logDirectory = filePath + "/" + sceneName;
         Directory.CreateDirectory(logDirectory);
         string rawDataFilePath = logDirectory + "/" + SUMMARY_FILE;
 

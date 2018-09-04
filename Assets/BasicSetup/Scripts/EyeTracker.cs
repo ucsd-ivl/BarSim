@@ -11,10 +11,7 @@ public class EyeTracker : MonoBehaviour
     public GameObject eyeCursor;
     public GameObject eyeLabeler;
     public GameObject foveHeadset;
-    [Tooltip("Specify the directory to log data relative to this application's home directory")]
-    public string logDirectory = "ExperimentData";
 
-    private string experimentStartTime;
     private string currentScene;
 
     private const string LABEL_IMAGE = "Assets/Labels/";
@@ -38,7 +35,6 @@ public class EyeTracker : MonoBehaviour
         eyeTrackingLogger = new EyeTrackingLogger();
 
         // Initialize variables
-        experimentStartTime = DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss");
         CreateNewScene("Scene_000");
     }
 
@@ -180,9 +176,9 @@ public class EyeTracker : MonoBehaviour
         return pathToObject;
     }
 
-    public void SaveToFile()
+    public void SaveToFile(string logDirectory)
     {
-        eyeTrackingLogger.SaveToFile(logDirectory + "/" + experimentStartTime, currentScene);
+        eyeTrackingLogger.SaveToFile(logDirectory, currentScene);
     }
 
     private void OnApplicationQuit()
