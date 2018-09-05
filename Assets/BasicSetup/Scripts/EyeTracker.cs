@@ -4,12 +4,54 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/**
+ * Eye Tracker
+ * 
+ * This class is responsible for performing all eye gaze/blink tracking throughout the various
+ * scenes in the experiment. It is capable of tracking where the user is looking (whether that
+ * be at an object or somewhere in the skybox), for how long, as well as keeping track of when
+ * the user blinks. It has an "EyeTrackingLogger" helper class that will deal with saving the
+ * data at the end of each scene.
+ *
+ *
+ * Tracking objects within the scene:
+ *
+ *   To track items within the scene, just add a collider to it. This eye tracker class will
+ *   raycast from the headset using the current gaze direction to see if it hit any object's
+ *   collider. If it does hit, it will note the object that it hit, as well as the full path
+ *   from the root object to the hit object.
+ *   
+ *   If you need a collider but don't what it to be tracked, please place it in the "Ignore
+ *   Raycast" layer.
+ *
+ *
+ * Tracking objects within the skybox:
+ *
+ *   To track items within the skybox, we would need to come up with an image file in the
+ *   format of longitude and latitude, where tracked objects are color coded in the file. We
+ *   would need an additional ".txt" file to specify what each pixel value in the labeled
+ *   image file means.
+ *   
+ *   Place the image file as "Scene_XXX.jpg" into "Custom/Labels/".
+ *   Place the text file as "Scene_XXX.txt" into "Custom/Labels".
+ *   Note: "XXX" is 3 digits representing the current scene.
+ *   
+ *   Format of the text file:              Example:
+ *   ------------------------              ------------------------------------
+ *   Label\n                               Skybox, Ceiling, Lights, Light_00
+ *   r g b\n                               1.0 0.5 0.5
+ *   
+ *   Please check GitHub for more examples.
+ */
 public class EyeTracker : MonoBehaviour
 {
     [Tooltip("Toggle on to see cursor pointing to what user is looking at")]
     public bool renderCursor = false;
+    [Tooltip("Specify the eye cursor game object")]
     public GameObject eyeCursor;
+    [Tooltip("Specify the eye labeler game object")]
     public GameObject eyeLabeler;
+    [Tooltip("Specify the FOVE headset game object (The parent of FOVE camera)")]
     public GameObject foveHeadset;
 
     private string currentScene;
@@ -38,6 +80,7 @@ public class EyeTracker : MonoBehaviour
         CreateNewScene("Scene_000");
     }
 
+    // Initialize fresh tracking instance for new scene. Read in skybox labels if exist.
     public void CreateNewScene(string sceneName)
     {
         // Create a new instance of dictionaries we'll use
@@ -82,7 +125,7 @@ public class EyeTracker : MonoBehaviour
         }
     }
 
-    // Update is called once per frame
+    // Update is called once per frame. Figure out what the user is looking at
     void Update()
     {
         // Get the current time
@@ -91,7 +134,7 @@ public class EyeTracker : MonoBehaviour
 
         // Get a normalize ray of the direction the user's eye is looking at
         FoveInterfaceBase.GazeConvergenceData gazeConvergenceData = FoveInterface.GetGazeConvergence();
-        
+
         // Determine where the ray hit if it does hit something
         RaycastHit eyeRayHit;
         Physics.Raycast(gazeConvergenceData.ray, out eyeRayHit, Mathf.Infinity);
@@ -149,7 +192,7 @@ public class EyeTracker : MonoBehaviour
 
         // Set the labeler to how long we've looked at that item
         string itemName = (currentLookAtItemPath == null) ? "null" : currentLookAtItemPath[currentLookAtItemPath.Count - 1];
-        ((TextMesh)eyeLabeler.GetComponent(typeof(TextMesh))).text = itemName + 
+        ((TextMesh)eyeLabeler.GetComponent(typeof(TextMesh))).text = itemName +
             Environment.NewLine + (totalLookAtDuration / TimeSpan.TicksPerMillisecond) + " ms";
 
         // Only render if user specified
@@ -162,6 +205,7 @@ public class EyeTracker : MonoBehaviour
         lastEyeBlinkCount = currentEyeBlinkCount;
     }
 
+    // Helper function to get full path from root object to leaf object
     private List<string> TransformToObjectPath(Transform leafObject)
     {
         // Get the path to go from root to object
@@ -176,6 +220,7 @@ public class EyeTracker : MonoBehaviour
         return pathToObject;
     }
 
+    // Save the current tracking data to file
     public void SaveToFile(string logDirectory)
     {
         eyeTrackingLogger.SaveToFile(logDirectory, currentScene);
@@ -183,6 +228,6 @@ public class EyeTracker : MonoBehaviour
 
     private void OnApplicationQuit()
     {
-        
+
     }
 }

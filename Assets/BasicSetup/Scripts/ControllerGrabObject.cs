@@ -3,6 +3,18 @@ using System.Threading;
 using System.Collections.Generic;
 using UnityEngine;
 
+/**
+ * ControllerGrabObject
+ * 
+ * This class enables the user to grab objects with the index trigger behind each
+ * of the Vive Controllers. This script can grab any object that has a collider
+ * and rigid body attached to it.
+ * 
+ * To use:
+ *    1) Make sure you have SteamVR and are using OpenVR as the "Virtual Reality SDK"
+ *    2) Attach a box collider to controller's game object near front of controller
+ *    3) Attach this script to the controller's game object
+ */
 public class ControllerGrabObject : MonoBehaviour
 {
 

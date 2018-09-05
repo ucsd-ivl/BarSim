@@ -7,6 +7,34 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
+/**
+ * Experiment Manager
+ * 
+ * This class is responsible for managing the various scenes in the experiment, logging data,
+ * and providing an abstract layer for scripts within various scenes to obtain data about the
+ * scene, headset, and logging information. This class operates in the background and should
+ * be placed in a scene that remains active across the entire experiment session.
+ * 
+ * Scene Setup: 
+ *   
+ *   To automate loading and unloading scenes, each scene must be labeled in the format of
+ *   "Scene_" + 3 digit representing scene number (e.g. "Scene_007"). This experiment manager
+ *   will start out with "Scene_000", followed by "Scene_001", "Scene_002", ..., until it
+ *   reaches the "totalNumberOfScenes" specified.
+ *   
+ *   Upon loading in a new scene, it will attempt to find the skybox associated with that scene.
+ *   This skybox should be saved as a Cubemap located under "/Custom/SkyBox/Resources/" with the
+ *   same name format as the scene ("Scene_XXX"). If no skybox is detected, it will load in the
+ *   specified "defaultSkyBoxMaterial".
+ *
+ * 
+ * Note: This script requires the "Fove Vive Setup" prefab be included in the same scene to work.
+ * Note: For this to work properly, please unload all scenes except the scene with this experiment
+ *       manager prior to starting the application.
+ * 
+ * Keycode:
+ *   N - Change to next scene
+ */
 public class ExperimentManager : MonoBehaviour
 {
     [Header("Experiment Settings")]
@@ -72,9 +100,16 @@ public class ExperimentManager : MonoBehaviour
 
     private Vector3 scenePositionShiftAmount;
 
+    // DEBUG: Set true to skip headset calibration and calibration scene
     private bool skipIntro = false;
 
-    // Use this for initialization
+    /**
+     * Initialize the experiment
+     * 
+     * This function will initiate a setup procedure for the fove vive setup, which includes
+     * calibrating the FOVE headset to vive space and calibrating FOVE's eye tracking. It
+     * will also create a logging instance to track which object the user is looking at.
+     */
     void Start()
     {
         // Initialize variables
@@ -90,21 +125,14 @@ public class ExperimentManager : MonoBehaviour
         logDirectory = Directory.GetParent(Application.dataPath) + "/" + logRootDirectory + "/" + experimentStartTime;
         Directory.CreateDirectory(logDirectory);
 
-        // Unload all scenes
-        int totalScenesKnown = SceneManager.sceneCount;
-        for (int i = 0; i < totalScenesKnown; i++)
-        {
-            Scene scene = SceneManager.GetSceneByBuildIndex(i);
-            if (scene.isLoaded && scene.name != "Default")
-                SceneManager.UnloadSceneAsync(scene.name);
-        }
-
         nextSceneTime = long.MaxValue;
-
-        if(skipIntro)
+        if (skipIntro)
             systemCalibrated = true;
     }
 
+    /**
+     * Set up a callback for user to enter in experiment username at start up
+     */
     private void Awake()
     {
         // Initialize callbacks
@@ -126,7 +154,8 @@ public class ExperimentManager : MonoBehaviour
         if (usernameInputGameObject.activeInHierarchy)
             return;
 
-        if(skipIntro && (currentSceneNumber == 0))
+        // Debug purposes if skipIntro == TRUE. Allow to skip calibration
+        if (skipIntro && (currentSceneNumber == 0))
         {
             currentSceneNumber = 1;
             uiPrompt.TurnOffUiPrompt();
@@ -151,7 +180,7 @@ public class ExperimentManager : MonoBehaviour
                         currentSceneState = SCENE_CHANGE_STATE.FadeOut;
                     }
                     break;
-                
+
                 // Fade scene out
                 case SCENE_CHANGE_STATE.FadeOut:
                     float fadeOutOpacity = 1.0f - ((float)(DateTime.Now.Ticks - fadeSceneTime)) / ((float)(fadeOutDuration * TimeSpan.TicksPerSecond));
@@ -160,7 +189,7 @@ public class ExperimentManager : MonoBehaviour
                     if (fadeOutOpacity == 0.0f)
                         currentSceneState = SCENE_CHANGE_STATE.InitiateChange;
                     break;
-                
+
                 // Tell program to start changing scene
                 case SCENE_CHANGE_STATE.InitiateChange:
                     headsetLocalizationInstance.ReCenterUser();
@@ -190,7 +219,7 @@ public class ExperimentManager : MonoBehaviour
                         currentSceneState = SCENE_CHANGE_STATE.FadeIn;
                     }
                     break;
-                
+
                 // Fade back in
                 case SCENE_CHANGE_STATE.FadeIn:
                     float fadeInOpacity = ((float)(DateTime.Now.Ticks - fadeSceneTime)) / ((float)(fadeOutDuration * TimeSpan.TicksPerSecond));
@@ -200,17 +229,27 @@ public class ExperimentManager : MonoBehaviour
                     {
                         eyeTrackerInstance.CreateNewScene(GenerateSceneName(currentSceneNumber));
                         currentSceneState = SCENE_CHANGE_STATE.NotChanging;
-                        if(nextSceneTime <= DateTime.Now.Ticks)
+                        if (nextSceneTime <= DateTime.Now.Ticks)
                             nextSceneTime = DateTime.Now.Ticks + secondsBetweenScene * TimeSpan.TicksPerSecond;
                     }
                     break;
             }
         }
 
+        // Allow change to next scene
         if (Input.GetKeyDown(KeyCode.N))
             ChangeToNextScene();
     }
 
+    /**
+     * Helper function for calibration setup.
+     * This will perform the following procedures
+     * 
+     *    1) Initialize eye tracking calibration
+     *    2) Ensure Vive Tracker for Headset and Vive Controllers are connected
+     *    3) Prompt to calibrate FOVE headset to Vive space (Press H)
+     *    4) Load initial scene (Scene_000) if everything is completed
+     */
     private void RunCalibrationSetup()
     {
         if (eyeTrackerCalibrationStarted == false)
@@ -249,6 +288,8 @@ public class ExperimentManager : MonoBehaviour
         }
     }
 
+
+    // Callback to log experiment username
     private void UsernameInputFieldCallback(InputField input)
     {
         // Get the username and turn off prompt
@@ -263,6 +304,7 @@ public class ExperimentManager : MonoBehaviour
             propertyFile.WriteLine("username : " + testSubjectName);
     }
 
+    // Change skybox based on the current scene
     private void ChangeSkybox(int sceneNumber)
     {
         Debug.Log("Loading in scene " + sceneNumber); ;
@@ -278,11 +320,13 @@ public class ExperimentManager : MonoBehaviour
             RenderSettings.skybox = defaultSkyboxMaterial;
     }
 
+    // Generate a unique hash for the current scene
     private string GenerateSceneName(int sceneNumber)
     {
         return "Scene_" + sceneNumber.ToString("000");
     }
 
+    // Change to the next scene if current scene is fully loaded
     public bool ChangeToNextScene()
     {
         if (nextAllowedSceneChangeRequestTime < DateTime.Now.Ticks)
@@ -297,12 +341,11 @@ public class ExperimentManager : MonoBehaviour
         return false;
     }
 
+    // Return the transforms for the user's head
     public Transform getUserHeadTransform()
     {
         return cameraGameObject.transform;
     }
-
-
 
     /**
      * This is to toggle automatic scene change for the *current* scene only.
@@ -316,31 +359,37 @@ public class ExperimentManager : MonoBehaviour
             nextSceneTime = long.MaxValue;
     }
 
+    // Toggle to show or don't show the eye tracking cursor / text
     public void ToggleEyeCursor(bool show)
     {
         eyeTrackerInstance.renderCursor = show;
     }
 
-    public SteamVR_Controller.Device [] GetControllers()
+    // Get an instance of the steam controllers to attach callback
+    public SteamVR_Controller.Device[] GetControllers()
     {
         return headsetLocalizationInstance.GetControllers();
     }
 
-    public Transform [] GetControllerTransforms()
+    // Get the controller's current transform
+    public Transform[] GetControllerTransforms()
     {
         return headsetLocalizationInstance.GetControllerTransforms();
     }
 
+    // Teleport a user to a certain location in world space. Will only change X and Z coordinates
     public void TeleportUser(Vector3 newLocation)
     {
         headsetLocalizationInstance.TeleportUser(newLocation);
     }
 
+    // Return the root logging directory
     public string GetLoggingDirectory()
     {
         return logDirectory;
     }
 
+    // Return the username of the current experiment
     public string GetTestSubjectName()
     {
         return testSubjectName;

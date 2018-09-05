@@ -2,6 +2,26 @@
 using UnityEngine;
 using Valve.VR;
 
+/**
+ * Update Fove From Vive Tracker
+ * 
+ * This is the magic sauce in making the FOVE headset work with the Vive Controllers.
+ * 
+ * Hardware Requirements:
+ *   - Two Vive Controllers for each hand
+ *   - 1 FOVE headset
+ *   - 1 Vive Tracker Attached to FOVE Headset for better tracking/range
+ *   
+ * What this script does:
+ *   - Automatically detect when the Vive Tracker for the headset is connected
+ *   - Calibrate the FOVE headset to Vive space (place headset & controllers pointing same direction and press H)
+ *   - Correct yaw drift from FOVE headset over extended usage
+ *   - Update user's position based on data from Vive Tracker attached to headset
+ *   
+ * Keycode:
+ *   H - Calibrate the FOVE headset to Vive space
+ *   P - Recenter the user's position to (0,0,0) world space coordinates
+ */
 public class UpdateFoveFromViveTracker : MonoBehaviour
 {
     public enum EIndex
@@ -32,7 +52,7 @@ public class UpdateFoveFromViveTracker : MonoBehaviour
     public GameObject rightController;
     [Tooltip("Specify the whole person (hmd, controller) setup object")]
     public GameObject personSetup;
-    
+
     [Header("Vive Tracker for Headset")]
     [Tooltip("Device ID of tracker. This will automatically be populated.")]
     public EIndex device = EIndex.None;
@@ -99,11 +119,12 @@ public class UpdateFoveFromViveTracker : MonoBehaviour
         isHeadsetCalibrated = false;
     }
 
+    // Correct the yaw drift component of the FOVE headset
     private void CorrectHeadsetYawDrift()
     {
         long currentTimeMs = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
         long timeSinceLastUpdateMs = currentTimeMs - lastDriftCorrectionTimeMs;
-        if (timeSinceLastUpdateMs < (long) millisecondsBetweenDriftCorrection)
+        if (timeSinceLastUpdateMs < (long)millisecondsBetweenDriftCorrection)
             return;
 
         Quaternion foveToFlatSurface = Quaternion.Euler(FoveHeadsetTareOrientation.eulerAngles.x, 0.0f, FoveHeadsetTareOrientation.eulerAngles.z);
@@ -129,7 +150,7 @@ public class UpdateFoveFromViveTracker : MonoBehaviour
          *   The user's current head orientation will now be used as a reference for 0 degree yaw in world space
          *   The position of the user will now be shifted to the origin of world space
          */
-        if(Input.GetKeyDown(KeyCode.H))
+        if (Input.GetKeyDown(KeyCode.H))
         {
             // Check that headset vive tracker and controllers are both active
             if ((IsHeadsetPositionTracked() && IsControllersConnected()) == false)
@@ -187,6 +208,7 @@ public class UpdateFoveFromViveTracker : MonoBehaviour
         transform.localPosition = currentViveTrackerPose.pos + eyePositionOffset;
     }
 
+    // Re-center to (0,0,0) in world space
     public void ReCenterUser()
     {
         personSetup.transform.position = new Vector3(0.0f, 0.0f, 0.0f);
@@ -197,6 +219,7 @@ public class UpdateFoveFromViveTracker : MonoBehaviour
             scenePositionShiftAmount.z);
     }
 
+    // Teleport user to the given position in world space. Will only change x and z components.
     public void TeleportUser(Vector3 newPosition)
     {
         ReCenterUser();
@@ -206,22 +229,26 @@ public class UpdateFoveFromViveTracker : MonoBehaviour
             personSetup.transform.position.z + newPosition.z);
     }
 
+    // Return if the FOVE headset has been calibrated to Vive space
     public bool IsHeadsetCalibrated()
     {
         return isHeadsetCalibrated;
     }
 
+    // Determine if Vive Tracker for headset is detected
     public bool IsHeadsetPositionTracked()
     {
         return (device != EIndex.None);
     }
 
+    // Determine if the controllers are both connected
     public bool IsControllersConnected()
     {
         return (leftController.activeInHierarchy) && (rightController.activeInHierarchy);
     }
 
-    public SteamVR_Controller.Device [] GetControllers()
+    // Return an instance of each of the Vive's left/right controller
+    public SteamVR_Controller.Device[] GetControllers()
     {
         SteamVR_Controller.Device[] controllers = new SteamVR_Controller.Device[2];
         controllers[0] = leftController.GetComponent<ControllerGrabObject>().GetDevice();
@@ -229,7 +256,8 @@ public class UpdateFoveFromViveTracker : MonoBehaviour
         return controllers;
     }
 
-    public Transform [] GetControllerTransforms()
+    // Return the transform of the Vive's left/right controller
+    public Transform[] GetControllerTransforms()
     {
         Transform[] controllersTransform = new Transform[2];
         controllersTransform[0] = leftController.transform;
@@ -237,6 +265,7 @@ public class UpdateFoveFromViveTracker : MonoBehaviour
         return controllersTransform;
     }
 
+    // Enable callback to detect new pose from Vive Tracker at start
     void OnEnable()
     {
         var render = SteamVR_Render.instance;
@@ -250,6 +279,7 @@ public class UpdateFoveFromViveTracker : MonoBehaviour
         deviceConnectedAction.enabled = true;
     }
 
+    // Disable callback to detect new pose from Vive Tracker
     void OnDisable()
     {
         newPosesAction.enabled = false;

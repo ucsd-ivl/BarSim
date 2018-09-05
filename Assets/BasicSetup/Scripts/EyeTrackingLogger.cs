@@ -3,6 +3,63 @@ using System.IO;
 using System.Collections.Generic;
 using UnityEngine;
 
+/**
+ * EyeTrackingLogger
+ * 
+ * This is a helper class in charge of logging eye tracking data and saving it to a file.
+ * This class will create three files: "labeledDataSummary.data", "blink.csv", "lookAt.csv"
+ * 
+ * ---------------------------------------------------------------------------------------
+ * 
+ * labeledDataSummary.data
+ * 
+ *   This is the main summary file storing how long (in milliseconds) and how many
+ *   times the user looked at each object in the scene. It keeps the hiearchical aspect
+ *   of the data. Please use "parseRawExperimentData.py" to convert this to proper ".csv"
+ *   and ".json" format.
+ *   
+ *   Format: duration,blink_count,label
+ *   
+ *   Example:
+ *     duration,blink_count,label
+ *     7983,3,Background
+ *     7983,3,Background,ComputerStation
+ *     7983,3,Background,ComputerStation,Tables
+ *     5062,1,Background,ComputerStation,Tables,Table_2
+ *     2920,2,Background,ComputerStation,Tables,Table_3
+ *     1801,0,skybox
+ *     1801,0,skybox,neutral
+ *     1801,0,skybox,neutral,white_board
+ *     
+ * ---------------------------------------------------------------------------------------
+ * 
+ * blink.csv
+ * 
+ *   This tracks when the user blinked and what the user looked at when they blinked
+ *   
+ *   Format: Time,Item
+ *   
+ *   Example:
+ *     Time,Item
+ *     17:44:18.089,Wall,RightWall
+ *     17:44:20.058,Wall,RightWall
+ *     17:44:20.975,Wall,BackWall
+ *     17:44:23.074,Wall,FrontWall
+ *   
+ * ---------------------------------------------------------------------------------------
+ *
+ * lookAt.csv
+ * 
+ *   This tracks when the user switched from looking at one item to another item
+ *   
+ *   Format: Time,Item
+ *   
+ *   Example:
+ *     Time,Item
+ *     17:44:16.589,Floor__
+ *     17:44:16.622,Wall,RightWall
+ *     17:44:17.239,Calibration Objects,Calibration Object (6),Front Cube
+ */
 public class EyeTrackingLogger
 {
     struct TrackedEyeFeatures
@@ -48,6 +105,7 @@ public class EyeTrackingLogger
         lookAtTrackerStreamWriter.WriteLine("Time,Item");
     }
 
+    // Update the current label. Specify the look at time (milliseconds) and blink count since last update.
     public long UpdateLabels(List<string> pathToObject, long lookAtTime, long blinkCount)
     {
         // If object path is null, create a pseudo-null path
@@ -56,7 +114,7 @@ public class EyeTrackingLogger
 
         // Update the hiearchy
         string pathKey = "";
-        foreach(string label in pathToObject)
+        foreach (string label in pathToObject)
         {
             // If current label doesn't exist, create it
             pathKey += (pathKey == "") ? label : ("," + label);

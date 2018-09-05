@@ -3,6 +3,14 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+/**
+ * Camera Fade
+ * 
+ * Since the current VR setup is unable to render any GUI aspect onto the head mounted display,
+ * this class is used as a hack to emulate fading between scenes. Please place a small object
+ * that covers the user's headset (eg. small sphere). Add this script to that object to
+ * emulate scene fading.
+ */
 public class CameraFade : MonoBehaviour
 {
 
@@ -19,9 +27,10 @@ public class CameraFade : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+
     }
 
+    // Set the fade amount. 1.0f = Able to see scene. 0.0f = Completely black
     public void setOpacity(float newOpacity)
     {
         // Calculate the new opacity
