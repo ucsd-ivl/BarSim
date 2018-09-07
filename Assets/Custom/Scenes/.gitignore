@@ -1,5 +1,9 @@
-# Ignore Everything
-*
+Scene_001
+Scene_005
+Scene_008
+Scene_010
 
-# Except
-!.gitignore
+Scene_001.meta
+Scene_005.meta
+Scene_008.meta
+Scene_010.meta
