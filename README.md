@@ -50,9 +50,9 @@ in the SteamVR environment, this was our work around setup:
 
 *Note: We are using FOVE Version 0.14.1 at the time of this project. FOVE
 Version 0.15.0 provided much higher eye gaze accuracy. However, this version
-was quite buggy and we would not recommend.
+was quite buggy and we would not recommend.*
 
-Note: If you want to use SteamVR with the HTC Vive HMD again, just run
+*Note: If you want to use SteamVR with the HTC Vive HMD again, just run
 `/SteamVR_Setup/restoreEnvironment.py`*
 
 ## Unity Usage

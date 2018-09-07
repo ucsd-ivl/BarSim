@@ -68,20 +68,21 @@ be placed in a scene that remains active across the entire experiment session.
 ### Scene Setup
 
 To automate loading and unloading scenes, each scene must be labeled in the format of
-"Scene_" + 3 digit representing scene number (e.g. "Scene_007"). This experiment manager
-will start out with "Scene_000", followed by "Scene_001", "Scene_002", ..., until it
-reaches the "totalNumberOfScenes" specified.
+`Scene_` + 3 digit representing scene number (e.g. `Scene_007`). This experiment manager
+will start out with `Scene_000`, followed by `Scene_001`, `Scene_002`, ..., until it
+reaches the `totalNumberOfScenes` specified.
 
 ![Scene Naming](/Documentations/Images/ScenesNaming.png)
 
 Upon loading in a new scene, it will attempt to find the skybox associated with that scene.
-This skybox should be saved as a Cubemap located under "/Custom/SkyBox/Resources/" with the
-same name format as the scene ("Scene_XXX"). If no skybox is detected, it will load in the
-specified "defaultSkyBoxMaterial".
+This skybox should be saved as a Cubemap located under `/Custom/SkyBox/Resources/` with the
+same name format as the scene (`Scene_XXX`). If no skybox is detected, it will load in the
+specified `defaultSkyBoxMaterial`.
 
 ![Scene Skybox](/Documentations/Images/SceneSkybox.png)
 
-*Note: This script requires the "Fove Vive Setup" prefab be included in the same scene to work.*
+*Note: This script requires the `Fove Vive Setup` prefab be included in the same scene to work.*
+
 *Note: For this to work properly, please unload all scenes except the scene with this experiment
 manager prefab in it prior to starting the application.*
 
@@ -107,7 +108,7 @@ that will always appear in front of the user.
 This class is responsible for performing all eye gaze/blink tracking throughout the various
 scenes in the experiment. It is capable of tracking where the user is looking (whether that
 be at an object or somewhere in the skybox), for how long, as well as keeping track of when
-the user blinks. It has an "EyeTrackingLogger" helper class that will deal with saving the
+the user blinks. It has an `EyeTrackingLogger` helper class that will deal with saving the
 data at the end of each scene.
 
 ### Tracking objects within the scene
@@ -124,11 +125,11 @@ Raycast` layer.
 
 To track items within the skybox, we would need to come up with an image file in the
 format of longitude and latitude, where tracked objects are color coded in the file. We
-would need an additional ".txt" file to specify what each pixel value in the labeled
+would need an additional `.txt` file to specify what each pixel value in the labeled
 image means.
 
 * Place the labeled image file as `Scene_XXX.jpg` into `Custom/Labels/`
-* Place the labeled text file as "Scene_XXX.txt` into `Custom/Labels/`
+* Place the labeled text file as `Scene_XXX.txt` into `Custom/Labels/`
 
 *Note: `XXX` is 3 digits representing the current scene.*
 
@@ -152,8 +153,8 @@ This class will create three files: `labeledDataSummary.data`, `blink.csv`, `loo
 
 This is the main summary file storing how long (in milliseconds) and how many
 times the user blinked while looking at each object in the scene. It keeps the
-hierarchical aspect of the data. Please use "parseRawExperimentData.py" to
-convert this to proper ".csv" and ".json" format.
+hierarchical aspect of the data. Please use `parseRawExperimentData.py` to
+convert this to proper `.csv` and `.json` format.
 
 Format: `duration,blink_count,label`
 
