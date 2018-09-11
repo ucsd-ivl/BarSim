@@ -111,7 +111,7 @@ public class EyeTracker : MonoBehaviour
             // Get the path to object and remove trailing/leading white spaces
             string[] pathToObject = labels[i].Split(',');
             for (int k = 0; k < pathToObject.Length; k++)
-                pathToObject[k] = pathToObject[k].Trim();
+                pathToObject[k] = pathToObject[k].Trim().Replace(' ', '_');
 
             // Get the color
             string[] colorRGB = labels[i + 1].Split(' ');
@@ -213,7 +213,7 @@ public class EyeTracker : MonoBehaviour
         Transform currentObject = leafObject;
         while (currentObject != null)
         {
-            pathToObject.Add(currentObject.name);
+            pathToObject.Add(currentObject.name.Trim().Replace(' ', '_'));
             currentObject = currentObject.parent;
         }
         pathToObject.Reverse();
