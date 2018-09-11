@@ -11,8 +11,7 @@ out the application.
 * [Suburb Neighborhood House Pack](https://assetstore.unity.com/packages/3d/environments/urban/suburb-neighborhood-house-pack-modular-72712)
 * [Modern Library](https://assetstore.unity.com/packages/3d/props/interior/modern-library-51829)
 
-*Note: You'll need to regenerate lighting for each of the big scenes (Scene_001,
-Scene_005, Scene_008, and Scene_010).*
+*Note: You'll need to regenerate lighting for each of the big scenes.*
 
 Generating Lights:
 

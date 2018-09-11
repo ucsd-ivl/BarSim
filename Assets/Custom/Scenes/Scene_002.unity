@@ -113,15 +113,15 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
---- !u!1 &454432737
+--- !u!1 &328410299
 GameObject:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   serializedVersion: 5
   m_Component:
-  - component: {fileID: 454432739}
-  - component: {fileID: 454432738}
+  - component: {fileID: 328410301}
+  - component: {fileID: 328410300}
   m_Layer: 0
   m_Name: Directional Light
   m_TagString: Untagged
@@ -129,12 +129,12 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!108 &454432738
+--- !u!108 &328410300
 Light:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 454432737}
+  m_GameObject: {fileID: 328410299}
   m_Enabled: 1
   serializedVersion: 8
   m_Type: 1
@@ -165,12 +165,12 @@ Light:
   m_UseColorTemperature: 0
   m_ShadowRadius: 0
   m_ShadowAngle: 0
---- !u!4 &454432739
+--- !u!4 &328410301
 Transform:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 454432737}
+  m_GameObject: {fileID: 328410299}
   m_LocalRotation: {x: 0.40821788, y: -0.23456968, z: 0.10938163, w: 0.8754261}
   m_LocalPosition: {x: 0, y: 3, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
@@ -178,7 +178,7 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 50, y: -30, z: 0}
---- !u!1001 &637308756
+--- !u!1001 &1435426870
 Prefab:
   m_ObjectHideFlags: 0
   serializedVersion: 2
@@ -220,22 +220,20 @@ Prefab:
     - target: {fileID: 102977283022440782, guid: 498d1289f05d78c41bb5f1954fa0ef52,
         type: 2}
       propertyPath: m_Text
-      value: 'Use the touchpad under your thumb to find that number on the scale.
-
-        Then press both triggers under your index fingers to confirm it.'
+      value: Use the touchpad to select the level and press both triggers to confirm.
       objectReference: {fileID: 0}
     - target: {fileID: 102685278274464514, guid: 498d1289f05d78c41bb5f1954fa0ef52,
         type: 2}
       propertyPath: m_Text
-      value: 'Let''s practice using the slider...
+      value: 'Experiment Survey
 
 
-        Pick a number between 0 and 100.'
+        How much do you feel sad, down, or uninterested in life right now?'
       objectReference: {fileID: 0}
     - target: {fileID: 114133219878243234, guid: 498d1289f05d78c41bb5f1954fa0ef52,
         type: 2}
       propertyPath: surveyTag
-      value: Test
+      value: D1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 498d1289f05d78c41bb5f1954fa0ef52, type: 2}

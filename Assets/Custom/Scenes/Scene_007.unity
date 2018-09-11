@@ -113,7 +113,7 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
---- !u!1001 &416282464
+--- !u!1001 &507919257
 Prefab:
   m_ObjectHideFlags: 0
   serializedVersion: 2
@@ -160,15 +160,15 @@ Prefab:
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 498d1289f05d78c41bb5f1954fa0ef52, type: 2}
   m_IsPrefabParent: 0
---- !u!1 &1189616244
+--- !u!1 &520783304
 GameObject:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   serializedVersion: 5
   m_Component:
-  - component: {fileID: 1189616246}
-  - component: {fileID: 1189616245}
+  - component: {fileID: 520783306}
+  - component: {fileID: 520783305}
   m_Layer: 0
   m_Name: Directional Light
   m_TagString: Untagged
@@ -176,12 +176,12 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!108 &1189616245
+--- !u!108 &520783305
 Light:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1189616244}
+  m_GameObject: {fileID: 520783304}
   m_Enabled: 1
   serializedVersion: 8
   m_Type: 1
@@ -212,12 +212,12 @@ Light:
   m_UseColorTemperature: 0
   m_ShadowRadius: 0
   m_ShadowAngle: 0
---- !u!4 &1189616246
+--- !u!4 &520783306
 Transform:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1189616244}
+  m_GameObject: {fileID: 520783304}
   m_LocalRotation: {x: 0.40821788, y: -0.23456968, z: 0.10938163, w: 0.8754261}
   m_LocalPosition: {x: 0, y: 3, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
