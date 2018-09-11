@@ -73,8 +73,10 @@ public class UpdateFoveFromViveTracker : MonoBehaviour
     private SteamVR_Utils.RigidTransform currentViveTrackerPose;
     private Quaternion ViveTrackerTareOrientation;
     private Quaternion FoveHeadsetTareOrientation;
+    private Quaternion FoveViveToWorldSpace;
     private float yawDriftCorrectionOffset;
     private long lastDriftCorrectionTimeMs;
+    private float rotateSetupDegree;
     private bool isHeadsetCalibrated = false;
 
     // Callback function to handle registering new connected Vive Tracker
@@ -116,6 +118,8 @@ public class UpdateFoveFromViveTracker : MonoBehaviour
         newPosesAction = SteamVR_Events.NewPosesAction(onNewPose);
         deviceConnectedAction = SteamVR_Events.DeviceConnectedAction(onNewDeviceConnection);
         lastDriftCorrectionTimeMs = DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond;
+        FoveViveToWorldSpace = Quaternion.Euler(0.0f, 0.0f, 0.0f);
+        rotateSetupDegree = 0;
         isHeadsetCalibrated = false;
     }
 
@@ -174,7 +178,8 @@ public class UpdateFoveFromViveTracker : MonoBehaviour
             personSetup.transform.position = new Vector3(0.0f, 0.0f, 0.0f);
 
             // See how much we should rotate the Vive to get it into its proper world space
-            personSetup.transform.rotation = Quaternion.Euler(0.0f, averageControllerRotation.y * -1.0f, 0.0f);
+            FoveViveToWorldSpace = Quaternion.Euler(0.0f, averageControllerRotation.y * -1.0f, 0.0f);
+            personSetup.transform.rotation = FoveViveToWorldSpace;
             Vector3 scenePositionShiftAmount = transform.position * -1.0f;
             personSetup.transform.position = new Vector3(
                 scenePositionShiftAmount.x,
@@ -206,6 +211,11 @@ public class UpdateFoveFromViveTracker : MonoBehaviour
         transform.localRotation = Quaternion.Euler(0.0f, yawOrientationOffset + yawDriftCorrectionOffset, 0.0f);
         var eyePositionOffset = transform.localRotation * FoveInterface.GetHMDRotation() * trackerToEyePositionOffset;
         transform.localPosition = currentViveTrackerPose.pos + eyePositionOffset;
+
+        // Rotate person setup to world space + any additional rotate offset specified by user
+        Vector3 currentPersonPosition = transform.position;
+        personSetup.transform.rotation = Quaternion.Euler(FoveViveToWorldSpace.eulerAngles + new Vector3(0.0f, rotateSetupDegree, 0.0f));
+        TeleportUser(currentPersonPosition);
     }
 
     // Re-center to (0,0,0) in world space
@@ -263,6 +273,11 @@ public class UpdateFoveFromViveTracker : MonoBehaviour
         controllersTransform[0] = leftController.transform;
         controllersTransform[1] = rightController.transform;
         return controllersTransform;
+    }
+
+    public void RotatePerson(float degree)
+    {
+        rotateSetupDegree = degree;
     }
 
     // Enable callback to detect new pose from Vive Tracker at start

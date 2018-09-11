@@ -193,6 +193,7 @@ public class ExperimentManager : MonoBehaviour
                 // Tell program to start changing scene
                 case SCENE_CHANGE_STATE.InitiateChange:
                     headsetLocalizationInstance.ReCenterUser();
+                    headsetLocalizationInstance.RotatePerson(0.0f);
                     SceneManager.UnloadSceneAsync(GenerateSceneName(currentSceneNumber));
                     currentSceneNumber++;
                     if (currentSceneNumber < totalNumberOfScenes)
@@ -393,5 +394,10 @@ public class ExperimentManager : MonoBehaviour
     public string GetTestSubjectName()
     {
         return testSubjectName;
+    }
+
+    public void RotatePerson(float degree)
+    {
+        headsetLocalizationInstance.RotatePerson(degree);
     }
 }

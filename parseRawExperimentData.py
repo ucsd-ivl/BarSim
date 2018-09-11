@@ -141,9 +141,7 @@ class HierarchyTree:
         with open(saveToPath, "w") as outputFile:
 
             # Write out the CSV header to file
-            outputFile.write("Duration (ms),Blink Count,")
-            for i in range(0, totalLevels):
-                outputFile.write("Label Field " + str(i) + ",")
+            outputFile.write("Duration_ms,Blink_Count,Cue_Type,Cue_General,Cue_group,Cue_Specific")
             outputFile.write("\n")
 
             # Traverse tree and populate csv file
@@ -193,8 +191,19 @@ def convertEntireDirectory(directoryPath="ExperimentData"):
 
 if __name__ == "__main__":
 
-    pathToData = input("Specify raw data path: ")
-    returnCode = convertRawToFriendly(pathToData) if (pathToData != "") else convertEntireDirectory()
+    print("Please specify either raw data directory to search or specific file to parse.")
+    print("Leave empty and press enter to use default search directory: ./ExperimentData\n")
+
+    pathToData = input("Specify directory or file to parse: ")
+
+    returnCode = True
+    if pathToData == "":
+        returnCode = convertEntireDirectory(directoryPath="ExperimentData")
+    elif pathToData.endswith(".data"):
+        returnCode = convertRawToFriendly(pathToData)
+    else:
+        returnCode = convertEntireDirectory(directoryPath=pathToData)
+
     print("Done.")
 
     if returnCode == True:
